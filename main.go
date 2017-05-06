@@ -4,6 +4,9 @@ import (
 	"log"
 	"os"
 
+	_ "github.com/lib/pq"
+
+	"github.com/tjheslin1/GoSchedule/database"
 	"github.com/tjheslin1/GoSchedule/server"
 )
 
@@ -12,7 +15,10 @@ func main() {
 	logger.Println("GoSchedule is running!")
 
 	close := make(chan bool)
-	server.Start(logger, close)
+	go server.Start(logger, close)
+
+	connection := database.Connect(logger)
+	database.SetUpSchema(connection, logger)
 
 	<-close
 }
