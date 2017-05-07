@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 // Port is the http port the server is started on.
@@ -11,20 +13,27 @@ var Port = 6060
 
 // Start starts up the http rest server.
 func Start(logger *log.Logger, close chan<- bool) {
-	http.HandleFunc("/ready", func(w http.ResponseWriter, req *http.Request) {
+	muxRouter := mux.NewRouter()
+
+	muxRouter.HandleFunc("/ready", func(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(204)
-	})
-	http.HandleFunc("/close", func(w http.ResponseWriter, req *http.Request) {
+	}).Methods("GET")
+
+	muxRouter.HandleFunc("/close", func(w http.ResponseWriter, req *http.Request) {
 		logger.Println("Closing server.")
 		close <- true
-	})
-	startServer(logger)
+	}).Methods("POST")
+
+	submitJob := SubmitJob{"/submit", logger}
+	muxRouter.HandleFunc(submitJob.URLPath, submitJob.Handler).Methods("POST")
+
+	startServer(muxRouter, logger)
 }
 
 // startServer sets up the HTTP server in a goroutine and waits for it to exit
-func startServer(logger *log.Logger) {
+func startServer(handler http.Handler, logger *log.Logger) {
 	go func() {
-		err := http.ListenAndServe(":"+strconv.Itoa(Port), nil)
+		err := http.ListenAndServe(":"+strconv.Itoa(Port), handler)
 		if err != nil {
 			logger.Println(err)
 			panic(err)
