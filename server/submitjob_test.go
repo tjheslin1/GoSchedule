@@ -20,7 +20,7 @@ func TestSubmitJobHandler(t *testing.T) {
 
 	logBuffer := new(bytes.Buffer)
 	logger := log.New(logBuffer, "", 0)
-	submitJob := SubmitJob{"/submit", logger}
+	submitJob := SubmitJob{"/submit", logger, nil} // TODO
 
 	handler := http.HandlerFunc(submitJob.Handler)
 	handler.ServeHTTP(respWriter, req)
@@ -49,7 +49,7 @@ func TestSubmitJobHandlerBadRequest(t *testing.T) {
 
 	logBuffer := new(bytes.Buffer)
 	logger := log.New(logBuffer, "", 0)
-	submitJob := SubmitJob{"/submit", logger}
+	submitJob := SubmitJob{"/submit", logger, nil}
 
 	handler := http.HandlerFunc(submitJob.Handler)
 	handler.ServeHTTP(respWriter, req)

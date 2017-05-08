@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/tjheslin1/GoSchedule/database"
 )
 
 // Port is the http port the server is started on.
@@ -24,8 +25,9 @@ func Start(logger *log.Logger, close chan<- bool) {
 		close <- true
 	}).Methods("POST")
 
-	submitJob := SubmitJob{"/submit", logger}
-	muxRouter.HandleFunc(submitJob.URLPath, submitJob.Handler).Methods("POST")
+	dbClient := database.PostgresDBClient{logger}
+	submitJob := SubmitJob{"/submit", logger, dbClient}
+	muxRouter.HandleFunc(submitJob.urlPath, submitJob.Handler).Methods("POST")
 
 	startServer(muxRouter, logger)
 }

@@ -7,12 +7,15 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/tjheslin1/GoSchedule/database"
 )
 
 // SubmitJob represents the path to submit jobs to the database.
 type SubmitJob struct {
-	URLPath string
-	logger  *log.Logger
+	urlPath  string
+	logger   *log.Logger
+	dbClient database.DBClient
 }
 
 // SubmitJobRequest represents an incooming request to persist a job.
