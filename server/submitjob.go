@@ -26,23 +26,20 @@ type SubmitJobRequest struct {
 func (submitJob *SubmitJob) Handler(respWriter http.ResponseWriter, req *http.Request) {
 	submitJob.logger.Printf("REQUEST: \n%v\n::::::\n", req)
 
-	errOccured := false
 	body, err := ioutil.ReadAll(req.Body)
 	if checkErrOccured(err, respWriter, submitJob.logger) {
-		errOccured = true
+		return
 	}
 	defer req.Body.Close()
 
 	var submitJobReq SubmitJobRequest
 	err = json.Unmarshal(body, &submitJobReq)
 	if checkErrOccured(err, respWriter, submitJob.logger) {
-		errOccured = true
+		return
 	}
 
-	if !errOccured {
-		respWriter.WriteHeader(http.StatusAccepted)
-		io.WriteString(respWriter, "Job submitted.")
-	}
+	respWriter.WriteHeader(http.StatusAccepted)
+	io.WriteString(respWriter, "Job submitted.")
 }
 
 func checkErrOccured(err error, respWriter http.ResponseWriter, logger *log.Logger) bool {
