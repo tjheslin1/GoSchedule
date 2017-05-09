@@ -12,7 +12,7 @@ type PostgresDBClient struct {
 }
 
 // Connection opens a database connection if not already connected, rerturning the connection.
-func (pgdbClient PostgresDBClient) Connection() *sql.DB {
+func (pgdbClient *PostgresDBClient) Connection() *sql.DB {
 	if pgdbClient.db != nil {
 		return pgdbClient.db
 	}
@@ -25,7 +25,7 @@ func (pgdbClient PostgresDBClient) Connection() *sql.DB {
 }
 
 // SubmitJob inserts the specified job into the database.
-func (pgdbClient PostgresDBClient) SubmitJob(jobEntry TableEntry) error {
+func (pgdbClient *PostgresDBClient) SubmitJob(jobEntry TableEntry) error {
 	// TODO
 	return nil
 }

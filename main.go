@@ -15,10 +15,11 @@ func main() {
 	logger.Println("GoSchedule is running!")
 
 	quit := make(chan bool)
+
 	go server.Start(logger, quit)
 
 	dbClient := database.PostgresDBClient{Logger: logger}
-	database.SetUpSchema(dbClient, logger)
+	database.SetUpSchema(&dbClient, logger)
 
 	<-quit
 }
