@@ -1,13 +1,10 @@
 package database
 
-import (
-	"database/sql"
-	"log"
-)
+import "log"
 
 // SetUpSchema creates any necessary tables if they do not already exist.
-func SetUpSchema(db *sql.DB, logger *log.Logger) {
-	rows, err := db.Query(`SELECT EXISTS(
+func SetUpSchema(client DBClient, logger *log.Logger) {
+	rows, err := client.Connection().Query(`SELECT EXISTS(
 	    SELECT *
 	    FROM information_schema.tables
 	    WHERE
@@ -25,7 +22,7 @@ func SetUpSchema(db *sql.DB, logger *log.Logger) {
 	}
 
 	if !exists {
-		_, err := db.Exec(createJobsTable)
+		_, err := client.Connection().Exec(createJobsTable)
 		check(err, logger)
 
 		logger.Println("'jobs' table created")

@@ -18,8 +18,7 @@ func main() {
 	go server.Start(logger, quit)
 
 	dbClient := database.PostgresDBClient{Logger: logger}
-	connection := dbClient.Connect()
-	database.SetUpSchema(connection, logger)
+	database.SetUpSchema(dbClient, logger)
 
 	<-quit
 }

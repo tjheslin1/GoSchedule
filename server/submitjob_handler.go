@@ -39,6 +39,20 @@ func (submitJob *SubmitJob) Handler(respWriter http.ResponseWriter, req *http.Re
 		return
 	}
 
+	submitJobEntry := database.TableEntry{
+		Name: "jobs",
+		Data: map[string]interface{}{
+			"job_id":   1,
+			"name":     submitJobReq.Name,
+			"url":      submitJobReq.URL,
+			"interval": submitJobReq.Interval,
+		},
+	}
+	err = submitJob.dbClient.SubmitJob(submitJobEntry)
+	if checkErrOccured(err, respWriter, submitJob.logger) {
+		return
+	}
+
 	respWriter.WriteHeader(http.StatusAccepted)
 	io.WriteString(respWriter, "Job submitted.")
 }

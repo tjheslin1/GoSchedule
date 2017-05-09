@@ -14,8 +14,8 @@ type TableEntry struct {
 
 // DBClient defines the interactions with the database.
 type DBClient interface {
-	Connect() *sql.DB
-	SubmitJob(*sql.DB, TableEntry) error
+	Connection() *sql.DB
+	SubmitJob(TableEntry) error
 }
 
 func check(err error, logger *log.Logger) {
