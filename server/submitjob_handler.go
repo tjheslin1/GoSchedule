@@ -27,13 +27,11 @@ type SubmitJobRequest struct {
 
 // Handler handles request to insert jobs into the database to be watched.
 func (submitJob *SubmitJob) Handler(respWriter http.ResponseWriter, req *http.Request) {
-	submitJob.logger.Printf("REQUEST: \n%v\n::::::\n", req)
-
 	body, err := ioutil.ReadAll(req.Body)
+	defer req.Body.Close()
 	if checkErrOccured(err, respWriter, submitJob.logger) {
 		return
 	}
-	defer req.Body.Close()
 
 	var submitJobReq SubmitJobRequest
 	err = json.Unmarshal(body, &submitJobReq)

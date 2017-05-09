@@ -14,11 +14,12 @@ func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)
 	logger.Println("GoSchedule is running!")
 
-	close := make(chan bool)
-	go server.Start(logger, close)
+	quit := make(chan bool)
+	go server.Start(logger, quit)
 
-	connection := database.Connect(logger)
+	dbClient := database.PostgresDBClient{Logger: logger}
+	connection := dbClient.Connect()
 	database.SetUpSchema(connection, logger)
 
-	<-close
+	<-quit
 }
