@@ -26,6 +26,6 @@ func (pgdbClient *PostgresDBClient) Connection() *sql.DB {
 
 // SubmitJob inserts the specified job into the database.
 func (pgdbClient *PostgresDBClient) SubmitJob(jobEntry TableEntry) error {
-	// TODO
+	// pgdbClient.Connection().Exec(insertStatement)
 	return nil
 }
