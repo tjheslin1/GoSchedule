@@ -20,9 +20,9 @@ type SubmitJob struct {
 
 // SubmitJobRequest represents an incooming request to persist a job.
 type SubmitJobRequest struct {
-	Name     string      `json:"name"`
-	Interval json.Number `json:"interval"`
-	URL      string      `json:"url"`
+	Name     string `json:"name"`
+	Interval int    `json:"interval"`
+	URL      string `json:"url"`
 }
 
 // Handler handles request to insert jobs into the database to be watched.
@@ -41,11 +41,11 @@ func (submitJob *SubmitJob) Handler(respWriter http.ResponseWriter, req *http.Re
 
 	submitJobEntry := database.TableEntry{
 		Name: "jobs",
-		Data: map[string]interface{}{
-			"job_id":   1,
-			"name":     submitJobReq.Name,
-			"url":      submitJobReq.URL,
-			"interval": submitJobReq.Interval,
+		Data: map[string]database.TableCell{
+			"job_id":   database.IntCell{Value: 1},
+			"name":     database.StringCell{Value: submitJobReq.Name},
+			"url":      database.StringCell{Value: submitJobReq.URL},
+			"interval": database.IntCell{Value: submitJobReq.Interval},
 		},
 	}
 	err = submitJob.dbClient.SubmitJob(submitJobEntry)

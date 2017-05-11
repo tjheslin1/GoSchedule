@@ -8,12 +8,12 @@ import (
 func TestInsertStatement(t *testing.T) {
 	tableEntry := TableEntry{
 		Name: "TestTableName",
-		Data: map[string]interface{}{
-			"column1": 1,
-			"column2": 50.0,
-			"column3": true,
-			"column4": time.Date(1970, 2, 3, 4, 5, 6, 0, time.UTC),
-			"column5": "stringstring",
+		Data: map[string]TableCell{
+			"column1": IntCell{1},
+			"column2": Float32Cell{50.0},
+			"column3": BoolCell{true},
+			"column4": TimeCell{time.Date(1970, 2, 3, 4, 5, 6, 0, time.UTC)},
+			"column5": StringCell{"stringstring"},
 		},
 	}
 

@@ -3,7 +3,6 @@ package server
 import (
 	"bytes"
 	"database/sql"
-	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -32,11 +31,11 @@ func TestSubmitJobHandler(t *testing.T) {
 
 	var expectedTableEntry = database.TableEntry{
 		Name: "jobs",
-		Data: map[string]interface{}{
-			"job_id":   1,
-			"name":     "testJob",
-			"url":      "http:localhost:6060/ready",
-			"interval": json.Number("1000"),
+		Data: map[string]database.TableCell{
+			"job_id":   database.IntCell{Value: 1},
+			"name":     database.StringCell{Value: "testJob"},
+			"url":      database.StringCell{Value: "http:localhost:6060/ready"},
+			"interval": database.IntCell{Value: 1000},
 		},
 	}
 	if !reflect.DeepEqual(dummyDBClient.capturedTableEntry, expectedTableEntry) {
