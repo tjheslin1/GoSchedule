@@ -90,7 +90,7 @@ func (dummyClient *DummyDBClient) Connection() *sql.DB {
 	return nil
 }
 
-func (dummyClient *DummyDBClient) SubmitJob(jobEntry database.TableEntry) error {
+func (dummyClient *DummyDBClient) SubmitEntry(jobEntry database.TableEntry) error {
 	dummyClient.capturedTableEntry = jobEntry
 	return nil
 }

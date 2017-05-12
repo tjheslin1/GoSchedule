@@ -48,7 +48,7 @@ func (submitJob *SubmitJob) Handler(respWriter http.ResponseWriter, req *http.Re
 			"interval": database.IntCell{Value: submitJobReq.Interval},
 		},
 	}
-	err = submitJob.dbClient.SubmitJob(submitJobEntry)
+	err = submitJob.dbClient.SubmitEntry(submitJobEntry)
 	if checkErrOccured(err, respWriter, submitJob.logger) {
 		return
 	}

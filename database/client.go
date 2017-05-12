@@ -18,7 +18,7 @@ type TableEntry struct {
 // DBClient defines the interactions with the database.
 type DBClient interface {
 	Connection() *sql.DB
-	SubmitJob(TableEntry) error
+	SubmitEntry(TableEntry) error
 }
 
 // TableCell represents any entry into the database.
