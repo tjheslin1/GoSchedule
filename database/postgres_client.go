@@ -5,6 +5,8 @@ import (
 	"log"
 )
 
+var connectionInfo = "user=go_scheduler dbname=go_scheduler_db sslmode=disable"
+
 // PostgresDBClient is the Postgresql implementation of DBClient.
 type PostgresDBClient struct {
 	Logger *log.Logger
@@ -17,7 +19,7 @@ func (pgdbClient *PostgresDBClient) Connection() *sql.DB {
 		return pgdbClient.db
 	}
 
-	db, err := sql.Open("postgres", "user=go_scheduler dbname=go_scheduler_db sslmode=disable")
+	db, err := sql.Open("postgres", connectionInfo)
 	check(err, pgdbClient.Logger)
 
 	pgdbClient.db = db
