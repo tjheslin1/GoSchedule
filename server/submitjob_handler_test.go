@@ -32,10 +32,10 @@ func TestSubmitJobHandler(t *testing.T) {
 	var expectedTableEntry = database.TableEntry{
 		Name: "jobs",
 		Data: map[string]database.TableCell{
-			"job_id":   database.IntCell{Value: 1},
-			"name":     database.StringCell{Value: "testJob"},
-			"url":      database.StringCell{Value: "http:localhost:6060/ready"},
-			"interval": database.IntCell{Value: 1000},
+			"name":       database.StringCell{Value: "testJob"},
+			"url":        database.StringCell{Value: "http:localhost:6060/ready"},
+			"start_time": database.IntCell{Value: 0},
+			"interval":   database.IntCell{Value: 1000},
 		},
 	}
 	if !reflect.DeepEqual(dummyDBClient.capturedTableEntry, expectedTableEntry) {
@@ -47,8 +47,7 @@ func TestSubmitJobHandler(t *testing.T) {
 			http.StatusAccepted, status)
 	}
 
-	expected := "Job submitted."
-	if respWriter.Body.String() != expected {
+	if expected := "Job submitted."; respWriter.Body.String() != expected {
 		t.Errorf("Handler returned unexpected body, wanted:\n'%v'\nbut got:\n'%v'\n",
 			expected, respWriter.Body.String())
 	}
