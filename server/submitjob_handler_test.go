@@ -14,7 +14,7 @@ import (
 
 func TestSubmitJobHandler(t *testing.T) {
 	req, err := http.NewRequest("POST", "http://localhost:6060/submit",
-		bytes.NewBufferString(`{"name":"testJob", "interval":1000, "url":"http:localhost:6060/ready"}`))
+		bytes.NewBufferString(`{"name":"testJob", "start_time": 1, "interval":1000, "url":"http:localhost:6060/ready"}`))
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
 		t.Fatal(err)
@@ -22,9 +22,9 @@ func TestSubmitJobHandler(t *testing.T) {
 
 	respWriter := httptest.NewRecorder()
 
-	logger := log.New(new(bytes.Buffer), "", 0)
-	dummyDBClient := DummyDBClient{}
-	submitJob := SubmitJob{"/submit", logger, &dummyDBClient}
+	dummyLogger := newDummyLogger()
+	dummyDBClient := dummyDBClient{}
+	submitJob := SubmitJob{"/submit", dummyLogger, &dummyDBClient}
 
 	handler := http.HandlerFunc(submitJob.Handler)
 	handler.ServeHTTP(respWriter, req)
@@ -34,10 +34,11 @@ func TestSubmitJobHandler(t *testing.T) {
 		Data: map[string]database.TableCell{
 			"name":       database.StringCell{Value: "testJob"},
 			"url":        database.StringCell{Value: "http:localhost:6060/ready"},
-			"start_time": database.IntCell{Value: 0},
+			"start_time": database.IntCell{Value: 1},
 			"interval":   database.IntCell{Value: 1000},
 		},
 	}
+
 	if !reflect.DeepEqual(dummyDBClient.capturedTableEntry, expectedTableEntry) {
 		t.Errorf("Expected\n'%v'\nto equal\n'%v'\n", dummyDBClient.capturedTableEntry, expectedTableEntry)
 	}
@@ -81,15 +82,19 @@ func TestSubmitJobHandlerBadRequest(t *testing.T) {
 	}
 }
 
-type DummyDBClient struct {
+func newDummyLogger() *log.Logger {
+	return log.New(new(bytes.Buffer), "", 0)
+}
+
+type dummyDBClient struct {
 	capturedTableEntry database.TableEntry
 }
 
-func (dummyClient *DummyDBClient) Connection() *sql.DB {
+func (dummyClient *dummyDBClient) Connection() *sql.DB {
 	return nil
 }
 
-func (dummyClient *DummyDBClient) SubmitEntry(jobEntry database.TableEntry) error {
+func (dummyClient *dummyDBClient) SubmitEntry(jobEntry database.TableEntry) error {
 	dummyClient.capturedTableEntry = jobEntry
 	return nil
 }

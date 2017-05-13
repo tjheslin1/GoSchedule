@@ -24,6 +24,8 @@ func SetUpSchema(client DBClient, logger *log.Logger) {
 	if !exists {
 		_, err := client.Connection().Exec(createJobsTable)
 		check(err, logger)
+		_, err = client.Connection().Exec(createJobsTrigger)
+		check(err, logger)
 
 		logger.Println("'jobs' table created")
 	}
@@ -36,3 +38,7 @@ const createJobsTable string = `CREATE TABLE jobs(
 	START_TIME BIGINT NOT NULL,
     INTERVAL BIGINT NOT NULL,
     CREATED_AT TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT (now() AT TIME ZONE 'utc'));`
+
+const createJobsTrigger string = `CREATE TRIGGER jobs_notify_event
+AFTER INSERT  ON jobs
+FOR EACH ROW EXECUTE PROCEDURE watch_jobs();`

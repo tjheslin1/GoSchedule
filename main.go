@@ -10,6 +10,8 @@ import (
 	"github.com/tjheslin1/GoSchedule/server"
 )
 
+// http://coussej.github.io/2015/09/15/Listening-to-generic-JSON-notifications-from-PostgreSQL-in-Go/
+
 func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lshortfile)
 	logger.Println("GoSchedule is running!")
