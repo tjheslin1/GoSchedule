@@ -37,6 +37,15 @@ func (cell IntCell) asString() string {
 	return strconv.Itoa(cell.Value)
 }
 
+// Int64Cell represents an int64 to be stored in the database.
+type Int64Cell struct {
+	Value int64
+}
+
+func (cell Int64Cell) asString() string {
+	return strconv.FormatInt(cell.Value, 10)
+}
+
 // StringCell represnts a string to be stored in the database.
 // Its `asString()` function wraps the string in single quotes ('')
 // 	to be written in SQL.

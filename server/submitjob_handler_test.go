@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/tjheslin1/GoSchedule/database"
+	"github.com/tjheslin1/GoSchedule/testutil"
 )
 
 func TestSubmitJobHandler(t *testing.T) {
@@ -22,9 +23,9 @@ func TestSubmitJobHandler(t *testing.T) {
 
 	respWriter := httptest.NewRecorder()
 
-	dummyLogger := newDummyLogger()
+	testLogger := testutil.NewTestLogger()
 	dummyDBClient := dummyDBClient{}
-	submitJob := SubmitJobHandler{"/submit", dummyLogger, &dummyDBClient}
+	submitJob := SubmitJobHandler{"/submit", testLogger.Logger, &dummyDBClient}
 
 	handler := http.HandlerFunc(submitJob.Handler)
 	handler.ServeHTTP(respWriter, req)
@@ -80,10 +81,6 @@ func TestSubmitJobHandlerBadRequest(t *testing.T) {
 		t.Errorf("Handler returned unexpected body, wanted:\n'%v'\nbut got:\n'%v'\n",
 			expected, respWriter.Body.String())
 	}
-}
-
-func newDummyLogger() *log.Logger {
-	return log.New(new(bytes.Buffer), "", 0)
 }
 
 type dummyDBClient struct {

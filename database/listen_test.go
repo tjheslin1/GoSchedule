@@ -1,10 +1,8 @@
 package database
 
 import (
-	"bytes"
 	"database/sql"
 	"errors"
-	"log"
 	"testing"
 
 	"github.com/tjheslin1/GoSchedule/model"
@@ -52,24 +50,6 @@ func TestUnmarshallJSONJobNotification(t *testing.T) {
 	if actualSubmitJob != expectedSubmitJob {
 		t.Errorf("Expected actual SubmitJob:\n'%v'to equal:\n'%v'\n", actualSubmitJob, expectedSubmitJob)
 	}
-}
-
-type dummyLogger struct {
-	logger    *log.Logger
-	logBuffer bytes.Buffer
-}
-
-func newDummyLogger() *dummyLogger {
-	dumLogger := dummyLogger{}
-
-	dumLogger.logger = log.New(nil, "", 0)
-	dumLogger.logger.SetOutput(&dumLogger.logBuffer)
-
-	return &dumLogger
-}
-
-func (dl *dummyLogger) logOutput() string {
-	return dl.logBuffer.String()
 }
 
 type dummyDBClient struct {

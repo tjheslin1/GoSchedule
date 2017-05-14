@@ -38,8 +38,8 @@ func (submitJob *SubmitJobHandler) Handler(respWriter http.ResponseWriter, req *
 		Data: map[string]database.TableCell{
 			"name":       database.StringCell{Value: submitJobReq.Name},
 			"url":        database.StringCell{Value: submitJobReq.URL},
-			"start_time": database.IntCell{Value: submitJobReq.StartTime},
-			"interval":   database.IntCell{Value: submitJobReq.Interval},
+			"start_time": database.Int64Cell{Value: submitJobReq.StartTime},
+			"interval":   database.Int64Cell{Value: submitJobReq.Interval},
 		},
 	}
 	err = submitJob.dbClient.SubmitEntry(submitJobEntry)

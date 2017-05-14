@@ -22,15 +22,17 @@ func SetUpSchema(client DBClient, logger *log.Logger) {
 	}
 
 	if !exists {
-		_, err := client.Connection().Exec(createJobsTable)
-		check(err, logger)
-		_, err = client.Connection().Exec(createListenFunction)
-		check(err, logger)
-		_, err = client.Connection().Exec(createJobsTrigger)
-		check(err, logger)
+		execAndCheck(createJobsTable, client, logger)
+		execAndCheck(createListenFunction, client, logger)
+		execAndCheck(createJobsTrigger, client, logger)
 
 		logger.Println("'jobs' table created")
 	}
+}
+
+func execAndCheck(sqlCommand string, client DBClient, logger *log.Logger) {
+	_, err := client.Connection().Exec(sqlCommand)
+	check(err, logger)
 }
 
 const createJobsTable string = `CREATE TABLE jobs(
