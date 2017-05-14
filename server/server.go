@@ -29,7 +29,7 @@ func Start(logger *log.Logger, quit chan<- bool) {
 	muxRouter.Handle("/close", logRequestResponse(logger, closeHandler)).Methods("POST")
 
 	dbClient := database.PostgresDBClient{Logger: logger}
-	submitJob := SubmitJob{"/submit", logger, &dbClient}
+	submitJob := SubmitJobHandler{"/submit", logger, &dbClient}
 	var submitJobHandler http.HandlerFunc = submitJob.Handler
 	muxRouter.Handle(submitJob.urlPath, logRequestResponse(logger, submitJobHandler)).Methods("POST")
 

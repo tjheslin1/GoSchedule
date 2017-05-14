@@ -24,7 +24,7 @@ func TestSubmitJobHandler(t *testing.T) {
 
 	dummyLogger := newDummyLogger()
 	dummyDBClient := dummyDBClient{}
-	submitJob := SubmitJob{"/submit", dummyLogger, &dummyDBClient}
+	submitJob := SubmitJobHandler{"/submit", dummyLogger, &dummyDBClient}
 
 	handler := http.HandlerFunc(submitJob.Handler)
 	handler.ServeHTTP(respWriter, req)
@@ -65,7 +65,7 @@ func TestSubmitJobHandlerBadRequest(t *testing.T) {
 	respWriter := httptest.NewRecorder()
 
 	logger := log.New(new(bytes.Buffer), "", 0)
-	submitJob := SubmitJob{"/submit", logger, nil}
+	submitJob := SubmitJobHandler{"/submit", logger, nil}
 
 	handler := http.HandlerFunc(submitJob.Handler)
 	handler.ServeHTTP(respWriter, req)

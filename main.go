@@ -23,5 +23,8 @@ func main() {
 	dbClient := database.PostgresDBClient{Logger: logger}
 	database.SetUpSchema(&dbClient, logger)
 
+	taskListener := database.JobListener{Logger: logger}
+	go taskListener.Run()
+
 	<-quit
 }

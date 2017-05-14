@@ -3,19 +3,40 @@ package database
 import (
 	"bytes"
 	"database/sql"
+	"errors"
 	"log"
 	"testing"
 )
 
-func TestWatch(t *testing.T) {
-	// taskListener := taskListener{newDummyLogger{}, dummyDBClient{}}
-	taskListener := taskListener{newDummyLogger(), &PostgresDBClient{}}
+func TestReportProblemCallback(t *testing.T) {
+	dummyLogger := newDummyLogger()
 
-	taskListener.watch()
+	taskListener := JobListener{dummyLogger.logger}
+
+	taskListener.reportProblemCallback(0, errors.New("Test error"))
+
+	var expectedLogOuput = "Error occured for pq.ListenerEventType: '0'.\nTest error\n"
+	if dummyLogger.logOutput() != expectedLogOuput {
+		t.Errorf("Expected log output of:'%s'\nbut got:\n'%v'\n", expectedLogOuput, dummyLogger.logOutput())
+	}
 }
 
-func newDummyLogger() *log.Logger {
-	return log.New(new(bytes.Buffer), "", 0)
+type dummyLogger struct {
+	logger    *log.Logger
+	logBuffer bytes.Buffer
+}
+
+func newDummyLogger() *dummyLogger {
+	dummyLogger := dummyLogger{}
+
+	dummyLogger.logger = log.New(nil, "", 0)
+	dummyLogger.logger.SetOutput(&dummyLogger.logBuffer)
+
+	return &dummyLogger
+}
+
+func (dl *dummyLogger) logOutput() string {
+	return dl.logBuffer.String()
 }
 
 type dummyDBClient struct {

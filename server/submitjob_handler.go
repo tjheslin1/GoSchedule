@@ -9,32 +9,25 @@ import (
 	"net/http"
 
 	"github.com/tjheslin1/GoSchedule/database"
+	"github.com/tjheslin1/GoSchedule/model"
 )
 
-// SubmitJob represents the path to submit jobs to the database.
-type SubmitJob struct {
+// SubmitJobHandler represents the path to submit jobs to the database.
+type SubmitJobHandler struct {
 	urlPath  string
 	logger   *log.Logger
 	dbClient database.DBClient
 }
 
-// SubmitJobRequest represents an incooming request to persist a job.
-type SubmitJobRequest struct {
-	Name      string `json:"name"`
-	StartTime int    `json:"start_time"`
-	Interval  int    `json:"interval"`
-	URL       string `json:"url"`
-}
-
 // Handler handles request to insert jobs into the database to be watched.
-func (submitJob *SubmitJob) Handler(respWriter http.ResponseWriter, req *http.Request) {
+func (submitJob *SubmitJobHandler) Handler(respWriter http.ResponseWriter, req *http.Request) {
 	body, err := ioutil.ReadAll(req.Body)
 	defer req.Body.Close()
 	if checkErrOccured(err, respWriter, submitJob.logger) {
 		return
 	}
 
-	var submitJobReq SubmitJobRequest
+	var submitJobReq model.SubmitJob
 	err = json.Unmarshal(body, &submitJobReq)
 	if checkErrOccured(err, respWriter, submitJob.logger) {
 		return
