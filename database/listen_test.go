@@ -27,12 +27,12 @@ type dummyLogger struct {
 }
 
 func newDummyLogger() *dummyLogger {
-	dummyLogger := dummyLogger{}
+	dumLogger := dummyLogger{}
 
-	dummyLogger.logger = log.New(nil, "", 0)
-	dummyLogger.logger.SetOutput(&dummyLogger.logBuffer)
+	dumLogger.logger = log.New(nil, "", 0)
+	dumLogger.logger.SetOutput(&dumLogger.logBuffer)
 
-	return &dummyLogger
+	return &dumLogger
 }
 
 func (dl *dummyLogger) logOutput() string {
