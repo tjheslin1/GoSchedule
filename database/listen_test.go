@@ -6,23 +6,24 @@ import (
 	"testing"
 
 	"github.com/tjheslin1/GoSchedule/model"
+	"github.com/tjheslin1/GoSchedule/testutil"
 )
 
 func TestReportProblemCallback(t *testing.T) {
-	dummyLogger := newDummyLogger()
+	testLogger := testutil.NewTestLogger()
 
-	jobListener := JobListener{dummyLogger.logger}
+	jobListener := JobListener{testLogger.Logger}
 
 	jobListener.reportProblemCallback(0, errors.New("Test error"))
 
 	var expectedLogOuput = "Error occured for pq.ListenerEventType: '0'.\nTest error\n"
-	if dummyLogger.logOutput() != expectedLogOuput {
-		t.Errorf("Expected log output of:'%s'\nbut got:\n'%v'\n", expectedLogOuput, dummyLogger.logOutput())
+	if testLogger.LogOutput() != expectedLogOuput {
+		t.Errorf("Expected log output of:'%s'\nbut got:\n'%v'\n", expectedLogOuput, testLogger.LogOutput())
 	}
 }
 
 func TestUnmarshallJSONJobNotification(t *testing.T) {
-	dummyLogger := newDummyLogger()
+	testLogger := testutil.NewTestLogger()
 
 	notification := []byte(`{
 			"table" : "jobs",
@@ -37,7 +38,7 @@ func TestUnmarshallJSONJobNotification(t *testing.T) {
 			}
 		}`)
 
-	jobListener := JobListener{dummyLogger.logger}
+	jobListener := JobListener{testLogger.Logger}
 	actualSubmitJob := jobListener.unmarshallJSONJobNotification(notification)
 
 	expectedSubmitJob := model.SubmitJob{

@@ -21,6 +21,7 @@ func NewTestLogger() *TestLogger {
 	return &testLogger
 }
 
-func (logger *TestLogger) logOutput() string {
+// LogOutput returns the captured logs as a string.
+func (logger *TestLogger) LogOutput() string {
 	return logger.logBuffer.String()
 }
