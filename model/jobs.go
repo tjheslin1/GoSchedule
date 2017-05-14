@@ -1,6 +1,6 @@
 package model
 
-// SubmitJob represents an incooming request to persist a job.
+// SubmitJob represents an incoming request to persist a job.
 type SubmitJob struct {
 	Name      string `json:"name"`
 	StartTime int    `json:"start_time"`

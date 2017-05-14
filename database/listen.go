@@ -1,12 +1,13 @@
 package database
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/lib/pq"
+	"github.com/tjheslin1/GoSchedule/model"
 )
 
 // JobListener listens over the postgresql database for INSERTs into the jobs table.
@@ -18,6 +19,8 @@ type JobListener struct {
 // channel for new jobs created.
 func (lstr *JobListener) Run() {
 	listener := pq.NewListener(connectionInfo, 10*time.Second, time.Minute, lstr.reportProblemCallback)
+	defer listener.Close()
+
 	err := listener.Listen("watch_tasks")
 	check(err, lstr.Logger)
 
@@ -41,15 +44,11 @@ func (lstr *JobListener) reportProblemCallback(eventType pq.ListenerEventType, e
 func (lstr *JobListener) waitForNotification(l *pq.Listener) {
 	select {
 	case n := <-l.Notify:
-		lstr.Logger.Println("Received data from channel [", n.Channel, "] :")
 
-		var prettyJSON bytes.Buffer
-		err := json.Indent(&prettyJSON, []byte(n.Extra), "", "\t")
-		if err != nil {
-			lstr.Logger.Println("Error processing JSON: ", err)
-			return
-		}
-		lstr.Logger.Println(string(prettyJSON.Bytes()))
+		submitJob := lstr.unmarshallJSONJobNotification([]byte(n.Extra))
+
+		fmt.Printf("SUBMIT JOB: '%v'", submitJob)
+
 		return
 	case <-time.After(90 * time.Second):
 		lstr.Logger.Println("Received no events for 90 seconds, checking connection")
@@ -58,4 +57,21 @@ func (lstr *JobListener) waitForNotification(l *pq.Listener) {
 		}()
 		return
 	}
+}
+
+func (lstr *JobListener) unmarshallJSONJobNotification(jsonData []byte) model.SubmitJob {
+	var notification JobWatchNotification
+	err := json.Unmarshal(jsonData, &notification)
+	check(err, lstr.Logger)
+
+	return notification.Data
+}
+
+// JobWatchNotification represents the JSON returned by the postgresql notificaiton.
+// The struct and its fields are expored to conform to the Go standards when using
+// the JSON tag.
+type JobWatchNotification struct {
+	Table  string          `json:"table"`
+	Action string          `json:"action"`
+	Data   model.SubmitJob `json:"data"`
 }

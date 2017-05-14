@@ -94,6 +94,6 @@ func (cell Float64Cell) asString() string {
 
 func check(err error, logger *log.Logger) {
 	if err != nil {
-		logger.Fatal(err)
+		panic(err)
 	}
 }
