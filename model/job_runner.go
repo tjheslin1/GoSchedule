@@ -18,14 +18,14 @@ func (jRun *JobRunner) Start() {
 	jRun.Logger.Println("Job Runner starting.")
 	defer jRun.Logger.Println("Job Runner finished.")
 
-	for {
-	}
+	// for {
+	// }
 }
 
 func (jRun *JobRunner) timeToRun(now time.Time) bool {
 	millisNow := now.UnixNano() / 1000000
 
-	if millisNow > jRun.Job.StartTime {
+	if millisNow >= jRun.Job.StartTime {
 		return true
 	}
 
