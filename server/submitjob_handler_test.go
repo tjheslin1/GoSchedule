@@ -35,8 +35,8 @@ func TestSubmitJobHandler(t *testing.T) {
 		Data: map[string]database.TableCell{
 			"name":       database.StringCell{Value: "testJob"},
 			"url":        database.StringCell{Value: "http:localhost:6060/ready"},
-			"start_time": database.IntCell{Value: 1},
-			"interval":   database.IntCell{Value: 1000},
+			"start_time": database.Int64Cell{Value: 1},
+			"interval":   database.Int64Cell{Value: 1000},
 		},
 	}
 
