@@ -19,6 +19,7 @@ func (jRun *JobRunner) Start() {
 	defer jRun.Logger.Println("Job Runner finished.")
 
 	// for {
+	//
 	// }
 }
 

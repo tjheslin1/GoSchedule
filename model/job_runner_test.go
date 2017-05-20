@@ -7,6 +7,27 @@ import (
 	"github.com/tjheslin1/GoSchedule/testutil"
 )
 
+func TestStart(t *testing.T) {
+	testLogger := testutil.NewTestLogger()
+	testJob := SubmitJob{
+		Name:      "TestJob",
+		StartTime: 100,
+		Interval:  2000,
+		URL:       "http://test.com",
+	}
+	jobRun := JobRunner{
+		Job:    testJob,
+		Logger: testLogger.Logger,
+	}
+
+	jobRun.Start()
+
+	expectedLogOutput := "Job Runner starting.\nJob Runner finished.\n"
+	if testLogger.LogOutput() != expectedLogOutput {
+		t.Errorf("Expected log output to be:\n%s\nbut was:\n%s\n", expectedLogOutput, testLogger.LogOutput())
+	}
+}
+
 var testTimes = []struct {
 	timeIn         time.Time
 	startTime      int64

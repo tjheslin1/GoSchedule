@@ -2,7 +2,6 @@ package database
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -12,7 +11,9 @@ import (
 
 // JobListener listens over the postgresql database for INSERTs into the jobs table.
 type JobListener struct {
-	Logger *log.Logger
+	JobSubmitted        chan<- model.SubmitJob
+	ConnectionCheckTime int
+	Logger              *log.Logger
 }
 
 // Run creates the github.com/lib/pq.Listener to listen on the `watch_tasks`
@@ -43,20 +44,21 @@ func (lstr *JobListener) reportProblemCallback(eventType pq.ListenerEventType, e
 // waitForNotification listens for a notification back from the pq.Listener.
 func (lstr *JobListener) waitForNotification(l *pq.Listener) {
 	select {
-	case n := <-l.Notify:
-
-		submitJob := lstr.unmarshallJSONJobNotification([]byte(n.Extra))
-
-		fmt.Printf("SUBMIT JOB: '%v'", submitJob)
-
+	case notification := <-l.Notify:
+		passNotitification(notification, lstr)
 		return
-	case <-time.After(90 * time.Second):
-		lstr.Logger.Println("Received no events for 90 seconds, checking connection")
+	case <-time.After(time.Duration(lstr.ConnectionCheckTime) * time.Second):
+		lstr.Logger.Printf("Received no events for %d seconds, checking connection\n", lstr.ConnectionCheckTime)
 		go func() {
 			l.Ping()
 		}()
 		return
 	}
+}
+
+func passNotitification(notification *pq.Notification, lstr *JobListener) {
+	submittedJob := lstr.unmarshallJSONJobNotification([]byte(notification.Extra))
+	lstr.JobSubmitted <- submittedJob
 }
 
 func (lstr *JobListener) unmarshallJSONJobNotification(jsonData []byte) model.SubmitJob {
