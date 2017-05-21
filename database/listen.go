@@ -11,9 +11,9 @@ import (
 
 // JobListener listens over the postgresql database for INSERTs into the jobs table.
 type JobListener struct {
-	JobSubmitted        chan<- model.SubmitJob
-	ConnectionCheckTime int
-	Logger              *log.Logger
+	JobSubmittedReceiver chan<- model.SubmitJob
+	ConnectionCheckTime  int
+	Logger               *log.Logger
 }
 
 // Run creates the github.com/lib/pq.Listener to listen on the `watch_tasks`
@@ -58,7 +58,7 @@ func (lstr *JobListener) waitForNotification(l *pq.Listener) {
 
 func passNotitification(notification *pq.Notification, lstr *JobListener) {
 	submittedJob := lstr.unmarshallJSONJobNotification([]byte(notification.Extra))
-	lstr.JobSubmitted <- submittedJob
+	lstr.JobSubmittedReceiver <- submittedJob
 }
 
 func (lstr *JobListener) unmarshallJSONJobNotification(jsonData []byte) model.SubmitJob {
