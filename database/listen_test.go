@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -27,20 +28,24 @@ func TestPassNotification_SubmittedJob(t *testing.T) {
 	}
 }
 
+// TODO callback is called many times, some with err populated.
 func TestPassNotification_TimeAfter(t *testing.T) {
-	t.SkipNow() // TODO
+	t.SkipNow()
 	submittedJobs := make(chan model.SubmitJob, 1)
 	testLogger := testutil.NewTestLogger()
 
 	jobListener := JobListener{submittedJobs, 1, testLogger.Logger}
 
 	callback := func(eventType pq.ListenerEventType, err error) {
-		t.Fail()
+		if err != nil {
+			t.Error("Expected callback error to be nil.")
+		}
+		fmt.Println("Callback Hit!")
 	}
 
 	jobListener.waitForNotification(pq.NewListener("name", 0, 0, callback))
 
-	<-time.After(5 * time.Second)
+	<-time.After(1 * time.Second)
 	// if actualJob != expectedSubmitJob {
 	// 	t.Errorf("Expected submittedJob:\n%v\nbut got:\n%v\n", expectedSubmitJob, actualJob)
 	// }
